@@ -3,7 +3,7 @@ import os
 import json
 from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QLineEdit, QPushButton, QHBoxLayout, QDialog, QListWidget
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtGui import QIcon
 
 user_data_folder = 'browserdata/user'
@@ -11,7 +11,7 @@ assets_folder = 'browserdata/assets'
 pages_folder = 'browserdata/pages'
 
 bookmarks_storage = user_data_folder + '/bookmarks.json'
-history_storage = os.path.join(user_data_folder, 'history.json')
+history_storage = os.path.join(user_data_folder, '/history.json')
 
 app_icon = assets_folder + '/icon.png'
 
@@ -26,7 +26,7 @@ class EmbeddedBrowserApp(QMainWindow):
         self.tab_widget.setTabsClosable(True)
         self.tab_widget.tabCloseRequested.connect(self.close_tab)
         self.setCentralWidget(self.tab_widget)
-        self.add_tab("file:///browserdata/pages/newtab.html")
+        self.add_tab("file:///" + pages_folder + "/newtab.html")
 
         new_tab_button = QPushButton("+")
         new_tab_button.clicked.connect(self.add_new_tab)
@@ -36,9 +36,9 @@ class EmbeddedBrowserApp(QMainWindow):
         self.history = self.load_history()
 
     def add_new_tab(self):
-        self.add_tab("file:///browserdata/pages/newtab.html")
+        self.add_tab("file:///" + pages_folder + "/newtab.html")
 
-    def add_tab(self, url: str):
+    def add_tab(self, url: str): 
         tab_widget = self.create_tab_widget(url)
         self.tab_widget.addTab(tab_widget, "Home")
 
@@ -48,6 +48,8 @@ class EmbeddedBrowserApp(QMainWindow):
         browser.loadFinished.connect(self.update_ui)
         browser.urlChanged.connect(self.update_url_bar)
         browser.page().windowCloseRequested.connect(self.close_tab)
+        
+        QWebEnginePage.moveToThread(browser.page(), browser.page().thread())
 
         url_bar = QLineEdit()
         url_bar.returnPressed.connect(self.load_url)
@@ -83,12 +85,27 @@ class EmbeddedBrowserApp(QMainWindow):
 
     def load_url(self):
         browser = self.sender().parentWidget().findChild(QWebEngineView)
-        browser.setUrl(QUrl(self.sender().text()))
+        
+        renames = pages_folder + '/renames.json'
+        if os.path.exists(renames):
+            with open(renames, "r") as f:
+                renames = json.load(f)
+                if self.sender().text() in renames:
+                    browser.setUrl(QUrl(renames[self.sender().text()]))
+                else:
+                    browser.setUrl(QUrl(self.sender().text()))
 
     def update_url_bar(self, url: QUrl):
         browser = self.sender()
 
         urlstring = url.toString()
+        
+        renames = pages_folder + '/renames.json'
+        if os.path.exists(renames):
+            with open(renames, "r") as f:
+                renames = json.load(f)
+                if urlstring in renames:
+                    urlstring = renames[urlstring]
 
         browser.url_bar.setText(urlstring)
         self.save_history(urlstring)
@@ -139,17 +156,17 @@ class EmbeddedBrowserApp(QMainWindow):
 
     def load_history(self):
         try:
-            with open("history.json", "r") as f:
+            with open(history_storage, "r") as f:
                 return json.load(f)
         except FileNotFoundError:
             return []
 
     def save_history(self, url: str):
         self.history.append({"url": url, "title": ""})
-        self.save_history_file()
+        #self.save_history_file()
 
     def save_history_file(self):
-        with open("history.json", "w") as f:
+        with open(history_storage, "w") as f:
             json.dump(self.history, f)
 
 class HistoryDialog(QDialog):
@@ -181,6 +198,15 @@ class HistoryDialog(QDialog):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(app_icon))
+    
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, False)
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.LocalStorageEnabled, True)
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.ScreenCaptureEnabled, False)
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.WebGLEnabled, True)
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.Accelerated2dCanvasEnabled, True)
+    
+    os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--use-gl=swiftshader'
 
     window = EmbeddedBrowserApp()
     window.show()

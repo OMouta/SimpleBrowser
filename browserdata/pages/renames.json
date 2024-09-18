@@ -1,0 +1,34 @@
+{
+    "file:///browserdata/pages/newtab.html": "simple://newtab",
+    "simple://newtab": "file:///browserdata/pages/newtab.html",
+
+    "file:///browserdata/pages/settings.html": "simple://settings",
+    "simple://settings": "file:///browserdata/pages/settings.html",
+
+    "file:///browserdata/pages/history.html": "simple://history",
+    "simple://history": "file:///browserdata/pages/history.html",
+
+    "file:///browserdata/pages/bookmarks.html": "simple://bookmarks",
+    "simple://bookmarks": "file:///browserdata/pages/bookmarks.html",
+
+    "file:///browserdata/pages/downloads.html": "simple://downloads",
+    "simple://downloads": "file:///browserdata/pages/downloads.html",
+
+    "file:///browserdata/pages/extensions.html": "simple://extensions",
+    "simple://extensions": "file:///browserdata/pages/extensions.html",
+
+    "file:///browserdata/pages/themes.html": "simple://themes",
+    "simple://themes": "file:///browserdata/pages/themes.html",
+
+    "file:///browserdata/pages/privacy.html": "simple://privacy",
+    "simple://privacy": "file:///browserdata/pages/privacy.html",
+
+    "file:///browserdata/pages/about.html": "simple://about",
+    "simple://about": "file:///browserdata/pages/about.html",
+
+    "file:///browserdata/pages/credits.html": "simple://credits",
+    "simple://credits": "file:///browserdata/pages/credits.html",
+
+    "file:///browserdata/pages/feedback.html": "simple://feedback",
+    "simple://feedback": "file:///browserdata/pages/feedback.html"
+}
