@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Browser Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding-top: 100px;
+            text-align: center;
+        }
+        p {
+            color: #ccc;
+        }
+        a{
+            color: rgb(80, 135, 255);
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .search-form {
+            margin-bottom: 20px;
+        }
+        .search-input {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+        .search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+        .search-button:active {
+            background-color: #004080;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Simple Browser</h1>
+        <div class="search-form">
+            <input type="text" id="search-input" class="search-input" placeholder="Search the web...">
+            <button id="search-button" class="search-button">Search</button>
+        </div>
+        <p>or use another seach engine (default google)</p>
+        <p><a href="https://search.brave.com/">brave search</a> | <a href="https://duckduckgo.com/">duckduckgo</a></p>
+    </div>
+
+    <script>
+        document.getElementById("search-button").addEventListener("click", function(event) {
+            event.preventDefault();  // Prevent form submission
+            
+            var searchQuery = document.getElementById("search-input").value;
+            if (searchQuery.trim() !== "") {
+                // Redirect to Google search page with the search query
+                window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(searchQuery);
+            }
+        });
+    </script>
+</body>
+</html>
