@@ -1,7 +1,8 @@
 import sys
 import os
 import json
-from PyQt5.QtCore import QUrl, Qt
+import re
+from PyQt5.QtCore import QUrl, Qt, QUrlQuery
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QLineEdit, QPushButton, QHBoxLayout, QDialog, QListWidget
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtGui import QIcon
@@ -90,10 +91,18 @@ class EmbeddedBrowserApp(QMainWindow):
         if os.path.exists(renames):
             with open(renames, "r") as f:
                 renames = json.load(f)
-                if self.sender().text() in renames:
-                    browser.setUrl(QUrl(renames[self.sender().text()]))
+                url_text = self.sender().text()
+                if url_text in renames:
+                    browser.setUrl(QUrl(renames[url_text]))
                 else:
-                    browser.setUrl(QUrl(self.sender().text()))
+                    if re.match(r'^(http://|https://|www\.)', url_text):
+                        browser.setUrl(QUrl(url_text))
+                    else:
+                        search_url = QUrl("https://www.google.com/search")
+                        query = QUrlQuery()
+                        query.addQueryItem("q", url_text)
+                        search_url.setQuery(query)
+                        browser.setUrl(search_url)
 
     def update_url_bar(self, url: QUrl):
         browser = self.sender()

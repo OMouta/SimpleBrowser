@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Browser Home</title>
+    <title>New Tab</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
+            background-color: #ffffff;
+            height: 100vh;
         }
         .container {
             max-width: 800px;
@@ -29,6 +30,7 @@
         }
         .search-form {
             margin-bottom: 20px;
+            gap: 0;
         }
         .search-input {
             width: 70%;
@@ -68,13 +70,24 @@
     </div>
 
     <script>
-        document.getElementById("search-button").addEventListener("click", function(event) {
-            event.preventDefault();
+
+        function redirect() {
             
             var searchQuery = document.getElementById("search-input").value;
             if (searchQuery.trim() !== "") {
                 // Redirect to Google search page with the search query
                 window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(searchQuery);
+            }
+        }
+
+        document.getElementById("search-button").addEventListener("click", function(event) {
+            event.preventDefault()
+
+            redirect()
+        });
+        document.getElementById("search-input").addEventListener("keydown", function(event) {
+            if (event. key === 'Enter') {
+                redirect()
             }
         });
     </script>
